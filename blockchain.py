@@ -3,6 +3,7 @@ import hashlib as hl
 
 import json
 import pickle
+import requests
 
 # Import two functions from our hash_util.py file. Omit the ".py" in the import
 from utility.hash_util import hash_block
@@ -171,6 +172,21 @@ class Blockchain:
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
             self.save_data()
+            for node in self.__peer_nodes:
+                url = 'http://{}/broadcast-transaction'.format(node)
+                try:
+                    json_data = {
+                        'sender': sender,
+                        'recipient': recipient,
+                        'amount': amount,
+                        'signature': signature
+                    }
+                    response = requests.post(url, json_data)
+                    if response.status_code == 400 or response.status_code == 500:
+                        print('Transaction declined, needs resolving.')
+                        return False
+                except requests.exceptions.ConnectionError:
+                    continue
             return True
         return False
 
