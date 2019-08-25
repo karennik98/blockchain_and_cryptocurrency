@@ -28,10 +28,10 @@
                 <div class="col">
                     <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <a class="nav-link active" href="/">Wallet &amp; Node</a>
+                            <a class="nav-link" href="/">Wallet &amp; Node</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/network">Network</a>
+                            <a class="nav-link active" href="/network">Network</a>
                         </li>
                     </ul>
                 </div>
@@ -57,11 +57,7 @@
             <div class="row">
                 <div class="col">
                     <ul class="list-group">
-                        <button 
-                            v-for="node in nodes"
-                            style="cursor: pointer;" 
-                            class="list-group-item list-group-item-action" 
-                            @click="onRemoveNode(node)">
+                        <button v-for="node in nodes" style="cursor: pointer;" class="list-group-item list-group-item-action" @click="onRemoveNode(node)">
                             {{ node }} (click to delete)
                         </button>
                     </ul>
@@ -76,53 +72,53 @@
         new Vue({
             el: '#app',
             data: {
-                node: [],
+                nodes: [],
                 newNodeUrl: '',
                 error: null,
                 success: null
             },
             methods: {
-                onAddNode: function() {
+                onAddNode: function () {
                     // Add node as peer node to local node server
                     var vm = this;
-                    axios.post('/node', {node: vm.newNodeUrl})
-                        .then(function(responce) {
+                    axios.post('/node', { node: this.newNodeUrl })
+                        .then(function (response) {
                             vm.success = 'Stored node successfully.';
                             vm.error = null;
-                            vm.nodes = responce.data.all_nodes
+                            vm.nodes = response.data.all_nodes
                         })
-                        .catch(function(error) {
+                        .catch(function (error) {
                             vm.success = null;
-                            vm.error = error.responce.data.message;
-                        })
+                            vm.error = error.response.data.message;
+                        });
                 },
-                onLoadNodes: function() {
+                onLoadNodes: function () {
                     // Load all peer nodes of the local node server
                     var vm = this;
                     axios.get('/nodes')
-                        .then(function(responce) {
+                        .then(function (response) {
                             vm.success = 'Fetched nodes successfully.';
                             vm.error = null;
-                            vm.nodes = responce.data.all_nodes
+                            vm.nodes = response.data.all_nodes
                         })
-                        .catch(function(error) {
+                        .catch(function (error) {
                             vm.success = null;
-                            vm.error = error.responce.data.message;
-                        })
+                            vm.error = error.response.data.message;
+                        });
                 },
-                onRemoveNode: function(node_url) {
+                onRemoveNode: function (node_url) {
                     // Remove node as a peer node
                     var vm = this;
-                    axios.delete('node/' + node_url)
-                        .then(function(responce) {
-                            vm.success = 'Deleted nodes successfully.';
+                    axios.delete('/node/' + node_url)
+                        .then(function (response) {
+                            vm.success = 'Deleted node successfully.';
                             vm.error = null;
-                            vm.nodes = responce.data.all_nodes
+                            vm.nodes = response.data.all_nodes
                         })
-                        .catch(function(error) {
+                        .catch(function (error) {
                             vm.success = null;
-                            vm.error = error.responce.data.message;
-                        })
+                            vm.error = error.response.data.message;
+                        });
                 }
             }
         })

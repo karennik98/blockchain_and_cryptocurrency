@@ -23,11 +23,11 @@ class Wallet:
         """Saves the keys to a file (wallet.txt)."""
         if self.public_key != None and self.private_key != None:
             try:
-                with open('wallet_{}.txt'.format(self.node_id), mode='w') as f:
+                with open('wallet-{}.txt'.format(self.node_id), mode='w') as f:
                     f.write(self.public_key)
                     f.write('\n')
                     f.write(self.private_key)
-                    return True
+                return True
             except (IOError, IndexError):
                 print('Saving wallet failed...')
                 return False
@@ -35,13 +35,13 @@ class Wallet:
     def load_keys(self):
         """Loads the keys from the wallet.txt file into memory."""
         try:
-            with open('wallet_{}.txt'.format(self.node_id), mode='r') as f:
+            with open('wallet-{}.txt'.format(self.node_id), mode='r') as f:
                 keys = f.readlines()
                 public_key = keys[0][:-1]
                 private_key = keys[1]
                 self.public_key = public_key
                 self.private_key = private_key
-                return True
+            return True
         except (IOError, IndexError):
             print('Loading wallet failed...')
             return False
